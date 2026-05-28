@@ -35,41 +35,41 @@ const navItems: NavItem[] = [
 
   {
     icon: <LayoutGrid />,
-    name: "Dashboard",
-    path: "/dashboard",
+    name: "Beranda",
+    path: "/beranda",
   },
   {
     name: "Master Data",
     icon: <Database />,
     subItems: [
-      { name: "Kategori", path: "/dashboard/kategori", pro: false },
-      { name: "Laporan", path: "/dashboard/laporan", pro: false },
+      { name: "Kategori", path: "/kategori", pro: false },
+      { name: "Laporan", path: "/laporan", pro: false },
     ],
   },
   {
     icon: <Search />,
     name: "Explore",
-    path: "/dashboard/jelajah",
+    path: "/jelajah",
   },
   {
     icon: <Users />,
     name: "Pengguna",
-    path: "/dashboard/users",
+    path: "/users",
   },
   {
     icon: <Megaphone />,
     name: "Laporan",
-    path: "/dashboard/laporan",
+    path: "/laporan",
   },
    {
     icon: <SendHorizontal />,
     name: "Notifikasi",
-    path: "/dashboard/notifikasi",
+    path: "/notifikasi",
   },
    {
     icon: <History  />,
     name: "Riwayat",
-    path: "/dashboard/pemutihan",
+    path: "/riwayat",
   },
 ];
 

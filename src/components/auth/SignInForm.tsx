@@ -87,7 +87,7 @@ export default function SignInForm() {
               <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
                 Tidak memiliki akun ? {""}
                 <Link
-                  href="/auth/signup"
+                  href="/signup"
                   className="text-emerald-500 hover:text-emerald-600 dark:text-emerald-400"
                 >
                   Daftar

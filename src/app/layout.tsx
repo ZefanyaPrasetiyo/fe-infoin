@@ -1,6 +1,7 @@
 import './globals.css';
 import "flatpickr/dist/flatpickr.css";
 import { SidebarProvider } from '@/context/SidebarContext';
+import {TooltipProvider} from "@/components/ui/tooltip";
 import { ThemeProvider } from '@/context/ThemeContext';
 import { cn } from "@/lib/utils";
 import { Poppins } from 'next/font/google';
@@ -22,7 +23,9 @@ export default function RootLayout({
       {/* Menggunakan font-sans agar membaca konfigurasi Tailwind dan menghapus outfit.className */}
       <body className="font-sans antialiased dark:bg-gray-900">
         <ThemeProvider>
-          <SidebarProvider>{children}</SidebarProvider>
+          <TooltipProvider>
+            <SidebarProvider>{children}</SidebarProvider>
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

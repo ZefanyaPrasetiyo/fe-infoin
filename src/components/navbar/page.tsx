@@ -190,7 +190,7 @@ const CardNav: React.FC<CardNavProps> = ({
             <img src={logo} alt={logoAlt} className="logo h-[28px]" />
           </div>
 
-<Link href="/auth/login">
+<Link href="/login">
           <button
             type="button"
             className="card-nav-cta-button hidden md:inline-flex border-0 rounded-[calc(0.75rem-0.2rem)] px-4 items-center h-full font-medium cursor-pointer transition-colors duration-300"
