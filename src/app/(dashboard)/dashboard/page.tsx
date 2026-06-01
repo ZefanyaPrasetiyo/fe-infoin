@@ -3,9 +3,7 @@ import { EcommerceMetrics } from "@/components/ecommerce/EcommerceMetrics";
 import React from "react";
 import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
 import MonthlySalesChart from "@/components/ecommerce/MonthlySalesChart";
-import StatisticsChart from "@/components/ecommerce/StatisticsChart";
 import RecentOrders from "@/components/ecommerce/RecentOrders";
-import DemographicCard from "@/components/ecommerce/DemographicCard";
 
 export const metadata: Metadata = {
   title:
@@ -15,28 +13,28 @@ export const metadata: Metadata = {
 
 export default function Ecommerce() {
   return (
+    // Grid utama untuk membungkus seluruh konten dashboard
     <div className="grid grid-cols-12 gap-4 md:gap-6">
-      <div className="col-span-12 space-y-6 xl:col-span-7">
+      
+      {/* 1. Baris Atas Kiri: Metrics Cards (Petugas, Kategori, Lokasi) */}
+      <div className="col-span-12 xl:col-span-7 space-y-6">
         <EcommerceMetrics />
 
+        {/* 2. Baris Tengah Kiri: Bar Chart */}
         <MonthlySalesChart />
       </div>
 
+      {/* 3. Baris Atas Kanan: Donut Chart Persentase Kategori */}
       <div className="col-span-12 xl:col-span-5">
         <MonthlyTarget />
       </div>
 
-      <div className="col-span-12">
-        <StatisticsChart />
-      </div>
-
-      <div className="col-span-12 xl:col-span-5">
-        <DemographicCard />
-      </div>
-
-      <div className="col-span-12 xl:col-span-7">
+      {/* 4. Baris Bawah: Tabel Laporan Terbaru */}
+      {/* Kasih col-span-12 biar dia makan semua jatah kolom dan langsung melar sempurna */}
+      <div className="col-span-12 w-full mt-2">
         <RecentOrders />
       </div>
+
     </div>
   );
 }

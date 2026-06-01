@@ -13,6 +13,7 @@ import {
   ArrowLeftRight,
   Package,
   Archive,
+   Inbox,
   Ellipsis,
   ArrowDownUp,
   Layers,
@@ -21,6 +22,7 @@ import {
   SendHorizontal,
   History,
   MapPinned,
+   House,
   Search,
 } from "lucide-react";
 
@@ -35,17 +37,33 @@ type NavItem = {
 const navItems: NavItem[] = [
   {
     icon: <LayoutGrid />,
-    name: "Beranda",
-    path: "/home",
+    name: "Dashboard",
+    path: "/dashboard",
   },
   {
     name: "Master Data",
     icon: <Database />,
     subItems: [
-      { name: "Kategori", path: "/kategori", pro: false },
-      { name: "Laporan", path: "/laporan", pro: false },
+      { name: "Lokasi", path: "/location", pro: false },
+      { name: "Kategori", path: "/category", pro: false },
+      { name: "Petugas", path: "/employees", pro: false },
     ],
   },
+  {
+    icon: < Inbox />,
+    name: "Laporan masuk",
+    path: "/reports",
+  },
+  {
+    icon: <Users />,
+    name: "Pengguna",
+    path: "/users",
+  },
+      {
+        icon: <House />,
+        name: "Beranda",
+        path: "/home",
+      },
   {
     icon: <Megaphone />,
     name: "Lapor",
@@ -55,11 +73,6 @@ const navItems: NavItem[] = [
     icon: <Search />,
     name: "Explore",
     path: "/explore",
-  },
-  {
-    icon: <Users />,
-    name: "Pengguna",
-    path: "/users",
   },
   {
     icon: <SendHorizontal />,
@@ -180,7 +193,7 @@ const AppSidebar: React.FC = () => {
                       href={subItem.path}
                       className={`menu-dropdown-item ${
                         isActive(subItem.path)
-                          ? "menu-dropdown-item-active"
+                          ? "menu-dropdown-item-active bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
                           : "menu-dropdown-item-inactive"
                       }`}
                     >
