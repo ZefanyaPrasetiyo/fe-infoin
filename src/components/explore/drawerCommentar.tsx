@@ -74,7 +74,7 @@ export function DrawerComment() {
         </TooltipContent>
       </Tooltip>
 
-      <DrawerContent className="h-screen w-full sm:w-[400px] rounded-t-[10px] sm:rounded-none flex flex-col border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+      <DrawerContent className="h-screen w-full sm:w-[400px] rounded-t-[10px] sm:rounded-none flex flex-col border-l border-slate-200 dark:border-slate-800 z-99999 bg-white dark:bg-black">
         
         <DrawerHeader className="border-b border-slate-100 dark:border-slate-800 pb-4 shrink-0">
           <DrawerTitle className="text-lg">Komentar (124)</DrawerTitle>
@@ -137,11 +137,8 @@ export function DrawerComment() {
           ))}
         </div>
         
-        <div className="border-t border-slate-100 dark:border-slate-800 p-4 bg-white dark:bg-slate-950 shrink-0">
+        <div className="border-t border-slate-100 dark:border-slate-800 p-4 bg-white dark:bg-black shrink-0">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white">
-              ME
-            </div>
             <div className="relative flex-1">
               <input 
                 type="text" 

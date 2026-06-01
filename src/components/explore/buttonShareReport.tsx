@@ -43,7 +43,7 @@ export function ButtonShareReport({ reportId = "123" }) {
             {copied ? (
               <Check className="h-4 w-4" />
             ) : (
-              <Share2 className="h-4 w-4 ml-[-2px]" /> 
+              <Share2 className="h-4 w-4 ml-0.5" /> 
             )}
           </div>
           {/* <span className="text-xs font-semibold text-white drop-shadow-md">
