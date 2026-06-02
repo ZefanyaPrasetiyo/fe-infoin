@@ -27,6 +27,7 @@ export interface CardNavProps {
   menuColor?: string;
   buttonBgColor?: string;
   buttonTextColor?: string;
+  theme?: string;
 }
 
 const CardNav: React.FC<CardNavProps> = ({
