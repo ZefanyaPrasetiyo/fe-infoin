@@ -68,17 +68,19 @@ export default function SignInForm() {
                       Ingat Saya
                     </span>
                   </div>
-                  <Link
+                  {/* <Link
                     href="/reset-password"
                     className="text-sm text-emerald-500 hover:text-emerald-600 dark:text-emerald-400"
                   >
                     lupa password?
-                  </Link>
+                  </Link> */}
                 </div>
                 <div>
+                  <Link href="/dashboard">
                   <Button className="w-full bg-emerald-600 hover:bg-emerald-700" size="sm">
                     Masuk
                   </Button>
+                  </Link>
                 </div>
               </div>
             </form>
