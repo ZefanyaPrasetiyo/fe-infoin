@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Field,
-  FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
 import {
@@ -25,39 +24,90 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { UserPlus } from "lucide-react";
+import { getLocations, Location } from "@/lib/location"; 
+import { createUser, UserPayload } from "@/lib/user";
+import { toast } from "sonner"; // Pastikan sonner terinstall
 
-const wilayahOptions = [
-  { value: "cibinong", label: "Kec. Cibinong" },
-  { value: "bojonggede", label: "Kec. Bojonggede" },
-];
+interface formData {
+  nama: string;
+  email: string;
+  no_telp: string;
+  password: string;
+  daerah_id: string;
+}
 
 export function DialogAddEmployee() {
   const [open, setOpen] = useState(false);
-  const [nama, setNama] = useState("");
-  const [email, setEmail] = useState("");
-  const [telp, setTelp] = useState("");
-  const [password, setPassword] = useState("");
-  const [daerah, setDaerah] = useState("");
+  const [lokasi, setLokasi] = useState<Location[]>([]);
+  const [loadingLokasi, setLoadingLokasi] = useState(false);
+  const [form, setForm] = useState<formData>({
+    nama: "",
+    email: "",
+    no_telp: "",
+    password: "",
+    daerah_id: "",
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Fetch lokasi saat dialog dibuka
+  useEffect(() => {
+    if (open && lokasi.length === 0) {
+      const fetchLokasi = async () => {
+        setLoadingLokasi(true);
+        try {
+          const res = await getLocations();
+          if (res && res.data) {
+            setLokasi(res.data);
+          }
+        } catch (error) {
+          console.error("Gagal mengambil data lokasi", error);
+        } finally {
+          setLoadingLokasi(false);
+        }
+      };
+      fetchLokasi();
+    }
+  }, [open, lokasi.length]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const payload = {
-      nama,
-      email,
-      no_telp: telp,
-      password,
-      daerah_id: daerah,
+    const payload: UserPayload = {
+      nama_panjang: form.nama,
+      email: form.email,
+      nomor_telepon: form.no_telp,
+      password: form.password,
+      id_location: form.daerah_id,
+      role: "petugas" // Default role sesuai form "Tambah Petugas"
     };
 
-    console.log("Data Petugas Baru:", payload);
+    const createPromise = createUser(payload).then((res) => {
+        if (res && res.success === false) {
+            throw new Error(res.message || "Gagal mendaftarkan petugas");
+        }
+        
+        setOpen(false);
+        setForm({
+            nama: "",
+            email: "",
+            no_telp: "",
+            password: "",
+            daerah_id: "",
+        });
 
-    setNama("");
-    setEmail("");
-    setTelp("");
-    setPassword("");
-    setDaerah("");
-    setOpen(false);
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+
+        return res;
+    });
+
+    toast.promise(createPromise, {
+        loading: "Mendaftarkan petugas baru...",
+        success: "Petugas berhasil didaftarkan!",
+        error: "Gagal mendaftarkan petugas"
+    }, {
+        position: "top-right"
+    });
   };
 
   return (
@@ -88,8 +138,8 @@ export function DialogAddEmployee() {
               type="text"
               required
               placeholder="Contoh: Ahmad Fauzi"
-              value={nama}
-              onChange={(e) => setNama(e.target.value)}
+              value={form.nama}
+              onChange={(e) => setForm({...form, nama: e.target.value})}
               className="w-full rounded-xl border border-gray-200 bg-transparent px-4 py-2.5 text-sm outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 dark:border-gray-800 dark:focus:border-emerald-500"
             />
           </Field>
@@ -103,8 +153,8 @@ export function DialogAddEmployee() {
                 type="email"
                 required
                 placeholder="ahmad@dinas.go.id"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={form.email}
+                onChange={(e) => setForm({...form, email: e.target.value})}
                 className="w-full rounded-xl border border-gray-200 bg-transparent px-4 py-2.5 text-sm outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 dark:border-gray-800 dark:focus:border-emerald-500"
               />
             </Field>
@@ -117,8 +167,8 @@ export function DialogAddEmployee() {
                 type="tel"
                 required
                 placeholder="08123456789"
-                value={telp}
-                onChange={(e) => setTelp(e.target.value)}
+                value={form.no_telp}
+                onChange={(e) => setForm({...form, no_telp: e.target.value})}
                 className="w-full rounded-xl border border-gray-200 bg-transparent px-4 py-2.5 text-sm outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 dark:border-gray-800 dark:focus:border-emerald-500"
               />
             </Field>
@@ -132,8 +182,8 @@ export function DialogAddEmployee() {
               type="password"
               required
               placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={form.password}
+              onChange={(e) => setForm({...form, password: e.target.value})}
               className="w-full rounded-xl border border-gray-200 bg-transparent px-4 py-2.5 text-sm outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 dark:border-gray-800 dark:focus:border-emerald-500"
             />
           </Field>
@@ -142,16 +192,20 @@ export function DialogAddEmployee() {
             <FieldLabel className="mb-1.5 block text-xs font-semibold text-gray-700 dark:text-gray-300">
               Wilayah Penempatan Dinas
             </FieldLabel>
-            <Select required value={daerah}>
+            <Select required value={form.daerah_id} onValueChange={(value) => setForm({...form, daerah_id: value})}>
               <SelectTrigger className="w-full h-[42px] rounded-xl border border-gray-200 bg-transparent px-4 text-sm outline-none focus:border-emerald-500 dark:border-gray-800">
-                <SelectValue placeholder="Pilih Kecamatan Tugas" />
+                <SelectValue placeholder={loadingLokasi ? "Memuat..." : "Pilih Kecamatan Tugas"} />
               </SelectTrigger>
-              <SelectContent className="z-99999 rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-               {wilayahOptions.map((option)=>(
-                 <SelectItem key={option.value} value={option.value}>
-                   {option.label}
-                 </SelectItem>
-               ))}
+              <SelectContent className="z-999 rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+               {lokasi.length > 0 ? (
+                 lokasi.map((option) => (
+                   <SelectItem key={option.id} value={option.id}>
+                     {option.nama_lokasi}
+                   </SelectItem>
+                 ))
+               ) : (
+                 <SelectItem value="none" disabled>Belum ada data wilayah</SelectItem>
+               )}
               </SelectContent>
             </Select>
           </Field>

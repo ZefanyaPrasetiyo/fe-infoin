@@ -5,6 +5,7 @@ import {TooltipProvider} from "@/components/ui/tooltip";
 import { ThemeProvider } from '@/context/ThemeContext';
 import { cn } from "@/lib/utils";
 import { Poppins } from 'next/font/google';
+import { Toaster } from "@/components/ui/sonner"
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -25,6 +26,7 @@ export default function RootLayout({
         <ThemeProvider>
           <TooltipProvider>
             <SidebarProvider>{children}</SidebarProvider>
+             <Toaster />
           </TooltipProvider>
         </ThemeProvider>
       </body>

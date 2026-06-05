@@ -4,21 +4,33 @@ import { Table, TableHeader, TableBody, TableRow, TableCell } from "@/components
 import { Search, MapPin, Edit2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DialogAddLocation } from "@/components/dialog/dialogCreateLoaction/page";
-
-const STATS_DATA = [
-  { label: "Total Wilayah / Kecamatan", value: "6", color: "text-blue-600" },
-  { label: "Radius Kunci Default", value: "5 KM", color: "text-emerald-600" },
-];
-
-const LOKASI_DUMMY = [
-  { id: 1, nama: "Cibinong", lat: "-6.4833", long: "106.8500", radius: "5 KM" },
-  { id: 2, nama: "Bojonggede", lat: "-6.4912", long: "106.7944", radius: "5 KM" },
-  { id: 3, nama: "Citeureup", lat: "-6.4906", long: "106.8742", radius: "5 KM" },
-  { id: 4, nama: "Babakan Madang", lat: "-6.5594", long: "106.8711", radius: "7 KM" },
-  { id: 5, status: "Sukuraja", nama: "Sukaraja", lat: "-6.5706", long: "106.8361", radius: "5 KM" },
-];
+import { useState, useEffect } from "react";
+import { getLocations, Location } from "@/lib/location"; // Sesuaikan path jika perlu
+import { Spinner } from "@/components/ui/spinner"; // Pastikan komponen spinner ada
+import DialogActionLocation from "@/components/dialog/dialogActionLocation/page"; // Pastikan path ini benar
 
 export default function MasterLokasiPage() {
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const fetchLocations = async () => {
+    try {
+      setLoading(true);
+      const res = await getLocations();
+      if (res && res.data) {
+        setLocations(res.data);
+      }
+    } catch (e) {
+      console.error("Error fetching locations:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLocations();
+  }, []);
+
   return (
     <div className="min-h-screen p-4 md:p-8">
       <div className="mx-auto w-full max-w-7xl rounded-md p-8">
@@ -32,16 +44,22 @@ export default function MasterLokasiPage() {
 
         <div className="mb-8 flex flex-col gap-8 border-b border-gray-100 pb-8 md:flex-row md:items-end md:justify-between dark:border-white/5">
           <div className="grid grid-cols-2 gap-8 md:flex md:gap-16">
-            {STATS_DATA.map((stat, i) => (
-              <div key={i} className="flex flex-col">
-                <span className={`text-3xl md:text-4xl font-medium ${stat.color}`}>
-                  {stat.value}
+             <div className="flex flex-col">
+                <span className="text-3xl md:text-4xl font-medium text-blue-600">
+                  {locations.length}
                 </span>
                 <span className="mt-1 text-xs font-medium text-gray-400">
-                  {stat.label}
+                  Total Wilayah / Kecamatan
                 </span>
               </div>
-            ))}
+              <div className="flex flex-col">
+                <span className="text-3xl md:text-4xl font-medium text-emerald-600">
+                  5 KM
+                </span>
+                <span className="mt-1 text-xs font-medium text-gray-400">
+                  Radius Kunci Default
+                </span>
+              </div>
           </div>
           
           <DialogAddLocation />
@@ -61,45 +79,55 @@ export default function MasterLokasiPage() {
             </TableHeader>
 
             <TableBody>
-              {LOKASI_DUMMY.map((row, index) => (
-                <TableRow 
-                  key={row.id} 
-                  className="border-b border-gray-50/50 transition-colors hover:bg-gray-50/50 dark:border-white/5 dark:hover:bg-white/5"
-                >
-                  <TableCell className="py-4 px-4 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
-                    {index + 1}
-                  </TableCell>
-
-                  <TableCell className="py-4 px-4 text-sm font-semibold text-gray-700 dark:text-gray-200">
-                    {row.nama}
-                  </TableCell>
-
-                  <TableCell className="py-4 px-4 text-sm font-mono text-gray-500 dark:text-gray-400">
-                    {row.lat}
-                  </TableCell>
-
-                  <TableCell className="py-4 px-4 text-sm font-mono text-gray-500 dark:text-gray-400">
-                    {row.long}
-                  </TableCell>
-
-                  <TableCell className="py-4 px-4">
-                    <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-[11px] font-medium text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
-                      {row.radius}
-                    </span>
-                  </TableCell>
-                
-                  <TableCell className="py-4 px-4 text-right">
-                    <div className="flex items-center justify-center gap-2">
-                      <button className="rounded-full p-2 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-500 dark:hover:bg-blue-500/10">
-                        <Edit2 className="h-4 w-4" />
-                      </button>
-                      <button className="rounded-full p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10">
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+              {loading ? (
+                 <TableRow>
+                  <td colSpan={6} className="py-12 text-center">
+                    <div className="flex items-center justify-center gap-2 text-gray-400">
+                      <Spinner className="h-5 w-5 animate-spin text-emerald-500" />
+                      <span className="text-sm">Memuat data wilayah...</span>
                     </div>
-                  </TableCell>
+                  </td>
                 </TableRow>
-              ))}
+              ) : locations.length === 0 ? (
+                <TableRow>
+                  <td colSpan={6} className="py-12 text-center text-sm text-gray-400">
+                    Belum ada data wilayah. Silakan tambah baru!
+                  </td>
+                </TableRow>
+              ) : (
+                locations.map((row, index) => (
+                  <TableRow 
+                    key={row.id} 
+                    className="border-b border-gray-50/50 transition-colors hover:bg-gray-50/50 dark:border-white/5 dark:hover:bg-white/5"
+                  >
+                    <TableCell className="py-4 px-4 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
+                      {index + 1}
+                    </TableCell>
+
+                    <TableCell className="py-4 px-4 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                      {row.nama_lokasi}
+                    </TableCell>
+
+                    <TableCell className="py-4 px-4 text-sm font-mono text-gray-500 dark:text-gray-400">
+                      {row.latitude}
+                    </TableCell>
+
+                    <TableCell className="py-4 px-4 text-sm font-mono text-gray-500 dark:text-gray-400">
+                      {row.longitude}
+                    </TableCell>
+
+                    <TableCell className="py-4 px-4">
+                      <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-[11px] font-medium text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
+                        {row.radius_km} KM
+                      </span>
+                    </TableCell>
+                  
+                    <TableCell className="py-4 px-4 text-right">
+                     <DialogActionLocation location={row} />
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>

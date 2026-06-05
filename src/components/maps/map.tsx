@@ -11,7 +11,13 @@ import "leaflet-defaulticon-compatibility";
 // @ts-ignore
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 // @ts-ignore
-import "leaflet-geosearch/dist/geosearch.css"; // <-- CSS wajib buat kotak search
+import "leaflet-geosearch/dist/geosearch.css";
+
+interface MapReportProps {
+  position: [number, number];
+  setPosition: (position: [number, number]) => void;
+  zoom?: number;
+}
 
 function MapClickHandler({ onLocationSelect }: { onLocationSelect: (lat: number, lng: number) => void }) {
   useMapEvents({
@@ -31,7 +37,7 @@ function MapControls({ onLocationSelect }: { onLocationSelect: (lat: number, lng
     const searchControl = new GeoSearchControl({
       provider: provider,
       style: "bar",
-      showMarker: false, // Dimatikan karena kita pakai <Marker> bawaan kita sendiri
+      showMarker: false, 
       showPopup: false,
       autoClose: true,
       searchLabel: "Cari lokasi atau alamat...",
@@ -68,9 +74,7 @@ function MapControls({ onLocationSelect }: { onLocationSelect: (lat: number, lng
   );
 }
 
-export default function MapReport(props: any) {
-  const { position, setPosition, zoom = 13 } = props;
-
+export default function MapReport({ position, setPosition, zoom = 13 }: MapReportProps) {
   const handleLocationSelect = (lat: number, lng: number) => {
     if (setPosition) {
       setPosition([lat, lng]);
@@ -81,8 +85,8 @@ export default function MapReport(props: any) {
     <MapContainer 
       center={position || [-6.200000, 106.816666]} 
       zoom={zoom} 
-      scrollWheelZoom={false} 
-      style={{ height: "400px", width: "100%" }}
+      scrollWheelZoom={true} // Gua saranin nyalain (true) bray biar bisa di-zoom pake mouse
+      style={{ height: "400px", width: "100%", zIndex: 0 }} // zIndex 0 penting biar ga nabrak modal
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
