@@ -1,6 +1,7 @@
 "use client";
 
 import { Table, TableHeader, TableBody, TableRow, TableCell } from "@/components/ui/table";
+import Pagination from "@/components/tables/Pagination";
 import { Search, MapPin, Edit2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DialogAddLocation } from "@/components/dialog/dialogCreateLoaction/page";
@@ -12,6 +13,16 @@ import DialogActionLocation from "@/components/dialog/dialogActionLocation/page"
 export default function MasterLokasiPage() {
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 8;
+  const totalPages = Math.max(1, Math.ceil(locations.length / pageSize));
+  const paginatedLocations = locations.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const fetchLocations = async () => {
     try {
@@ -95,13 +106,13 @@ export default function MasterLokasiPage() {
                   </td>
                 </TableRow>
               ) : (
-                locations.map((row, index) => (
+                paginatedLocations.map((row, index) => (
                   <TableRow 
                     key={row.id} 
                     className="border-b border-gray-50/50 transition-colors hover:bg-gray-50/50 dark:border-white/5 dark:hover:bg-white/5"
                   >
                     <TableCell className="py-4 px-4 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
-                      {index + 1}
+                      {index + 1 + (currentPage - 1) * pageSize}
                     </TableCell>
 
                     <TableCell className="py-4 px-4 text-sm font-semibold text-gray-700 dark:text-gray-200">
@@ -131,7 +142,18 @@ export default function MasterLokasiPage() {
             </TableBody>
           </Table>
         </div>
-        
+        {!loading && locations.length > 0 && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Menampilkan {Math.min(pageSize, locations.length - (currentPage - 1) * pageSize)} dari {locations.length} wilayah
+            </p>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(Math.max(1, Math.min(page, totalPages)))}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,29 +1,66 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableCell } from "@/components/ui/table";
-import { Search, Ban, CheckCircle } from "lucide-react";
-
-const STATS_DATA = [
-  { label: "Total Masyarakat", value: "1,420", color: "text-blue-600" },
-  { label: "Akun Aktif", value: "1,412", color: "text-emerald-600" },
-];
-
-const USER_DUMMY = [
-  { id: 1, nama: "Rian Hidayat", email: "rian.hid@gmail.com", telp: "081244556677", laporanCount: "12 Laporan", status: "Aktif", statusBg: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400" },
-  { id: 2, nama: "Dewi Lestari", email: "dewi.les@gmail.com", telp: "087899001122", laporanCount: "5 Laporan", status: "Aktif", statusBg: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400" },
-  { id: 3, nama: "Ferry Darmawan", email: "ferry.d@yahoo.com", telp: "085633445566", laporanCount: "2 Laporan", status: "Ditangguhkan", statusBg: "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400" },
-  { id: 4, nama: "Yulia Putri", email: "yulia.putri@gmail.com", telp: "081388776655", laporanCount: "0 Laporan", status: "Aktif", statusBg: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400" },
-  { id: 5, nama: "Hendra Wijaya", email: "hendra.w@gmail.com", telp: "089644552211", laporanCount: "8 Laporan", status: "Aktif", statusBg: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400" },
-];
+import Pagination from "@/components/tables/Pagination";
+import { Search, Ban, CheckCircle, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { getUsers, User } from "@/lib/user";
+import { useSession } from "next-auth/react";
 
 export default function MasyarakatPage() {
+  const { data: session } = useSession();
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 8;
+  const totalPages = Math.max(1, Math.ceil(users.length / pageSize));
+  const paginatedUsers = users.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    const fetchMasyarakat = async () => {
+      setLoading(true);
+      try {
+        const res = await getUsers();
+        if (res.success || res.data) {
+          const allUsers = res.data || res;
+          const masyarakatOnly = allUsers.filter((u: User) => u.role === "user");
+          setUsers(masyarakatOnly);
+        } else {
+          toast.error("Gagal memuat data masyarakat");
+        }
+      } catch (error) {
+        console.error("Error fetch users:", error);
+        toast.error("Terjadi kesalahan pada server");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMasyarakat();
+  }, []);
+
+  const totalMasyarakat = users.length;
+  const akunAktif = users.filter((u) => !u.deleted_at).length;
+
+  const STATS_DATA = [
+    { label: "Total Masyarakat", value: totalMasyarakat.toLocaleString(), color: "text-blue-600" },
+    { label: "Akun Aktif", value: akunAktif.toLocaleString(), color: "text-emerald-600" },
+  ];
+
   return (
     <div className="min-h-screen p-4 md:p-8">
       <div className="mx-auto w-full max-w-7xl rounded-md p-8">
         
         <div className="mb-10 flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-gray-800 dark:text-white">Data Masyarakat (User)</h1>
-          <button className="text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200">
+          <button className="text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer">
             <Search className="h-5 w-5" />
           </button>
         </div>
@@ -51,60 +88,108 @@ export default function MasyarakatPage() {
                 <TableCell className="p-4 text-xs font-semibold text-gray-400 bg-gray-50 dark:bg-gray-800/50 dark:text-gray-400">Nama Lengkap</TableCell>
                 <TableCell className="p-4 text-xs font-semibold text-gray-400 bg-gray-50 dark:bg-gray-800/50 dark:text-gray-400">Email</TableCell>
                 <TableCell className="p-4 text-xs font-semibold text-gray-400 bg-gray-50 dark:bg-gray-800/50 dark:text-gray-400">No Telp</TableCell>
-                <TableCell className="p-4 text-xs font-semibold text-gray-400 bg-gray-50 dark:bg-gray-800/50 dark:text-gray-400">Aktivitas</TableCell>
                 <TableCell className="p-4 text-xs font-semibold text-gray-400 bg-gray-50 dark:bg-gray-800/50 dark:text-gray-400 text-center">Status</TableCell>
                 <TableCell className="p-4 text-center text-xs font-semibold text-gray-400 bg-gray-50 dark:bg-gray-800/50 dark:text-gray-400 rounded-r-xl">Aksi</TableCell>
               </TableRow>
             </TableHeader>
 
             <TableBody>
-              {USER_DUMMY.map((row, index) => (
-                <TableRow 
-                  key={row.id} 
-                  className="border-b border-gray-50/50 transition-colors hover:bg-gray-50/50 dark:border-white/5 dark:hover:bg-white/5"
-                >
-                  <TableCell className="py-4 px-4 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
-                    {index + 1}
-                  </TableCell>
-
-                  <TableCell className="py-4 px-4 text-sm font-semibold text-gray-700 dark:text-gray-200">
-                    {row.nama}
-                  </TableCell>
-
-                  <TableCell className="py-4 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    {row.email}
-                  </TableCell>
-
-                  <TableCell className="py-4 px-4 text-sm text-gray-500 dark:text-gray-400">
-                    {row.telp}
-                  </TableCell>
-
-                  <TableCell className="py-4 px-4 text-sm font-medium text-slate-600 dark:text-slate-400">
-                    {row.laporanCount}
-                  </TableCell>
-
-                  <TableCell className="py-4 px-4 text-center">
-                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-medium ${row.statusBg}`}>
-                      {row.status}
-                    </span>
-                  </TableCell>
-                
-                  <TableCell className="py-4 px-4 text-right">
-                    <div className="flex items-center justify-center gap-2">
-                      <button 
-                        className="rounded-full p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10"
-                        title={row.status === "Aktif" ? "Suspend Akun" : "Aktifkan Kembali"}
-                      >
-                        {row.status === "Aktif" ? <Ban className="h-4 w-4" /> : <CheckCircle className="h-4 w-4 text-emerald-500" />}
-                      </button>
+              {loading ? (
+                <TableRow>
+                  <td colSpan={6} className="h-48 text-center">
+                    <div className="flex flex-col items-center justify-center gap-2 text-slate-400">
+                      <Loader2 className="h-6 w-6 animate-spin text-emerald-500" />
+                      <span className="text-sm">Memuat data masyarakat...</span>
                     </div>
-                  </TableCell>
+                  </td>
                 </TableRow>
-              ))}
+              ) : users.length === 0 ? (
+                <TableRow>
+                  <td colSpan={6} className="h-48 text-center text-sm text-slate-500">
+                    Belum ada data masyarakat terdaftar.
+                  </td>
+                </TableRow>
+              ) : (
+                paginatedUsers.map((row, index) => {
+                  const isOnline = session?.user?.id === row.id;
+                  const isSuspended = !!row.deleted_at;
+                  
+                  let statusText = "";
+                  let statusBg = "";
+
+                  if (isSuspended) {
+                    statusText = "Ditangguhkan";
+                    statusBg = "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400";
+                  } else if (isOnline) {
+                    statusText = "Online";
+                    statusBg = "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400";
+                  } else {
+                    statusText = "Offline";
+                    statusBg = "bg-slate-50 text-slate-600 dark:bg-slate-500/10 dark:text-slate-400";
+                  }
+
+                  return (
+                    <TableRow 
+                      key={row.id} 
+                      className="border-b border-gray-50/50 transition-colors hover:bg-gray-50/50 dark:border-white/5 dark:hover:bg-white/5"
+                    >
+                      <TableCell className="py-4 px-4 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
+                        {index + 1 + (currentPage - 1) * pageSize}
+                      </TableCell>
+
+                      <TableCell className="py-4 px-4 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                        {row.nama_panjang}
+                        {isOnline && <span className="ml-2 text-[10px] text-blue-500 font-normal"></span>}
+                      </TableCell>
+
+                      <TableCell className="py-4 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                        {row.email}
+                      </TableCell>
+
+                      <TableCell className="py-4 px-4 text-sm text-gray-500 dark:text-gray-400">
+                        {row.nomor_telepon || "-"}
+                      </TableCell>
+
+                      <TableCell className="py-4 px-4 text-center">
+                        <span className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-medium ${statusBg}`}>
+                          {statusText}
+                        </span>
+                      </TableCell>
+                    
+                      <TableCell className="py-4 px-4 text-right">
+                        <div className="flex items-center justify-center gap-2">
+                          <button 
+                            className={`rounded-full p-2 transition-colors ${
+                              isOnline 
+                                ? "text-gray-300 cursor-not-allowed" 
+                                : "text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10 cursor-pointer"
+                            }`}
+                            title={isSuspended ? "Aktifkan Kembali" : "Suspend Akun"}
+                            disabled={isOnline}
+                          >
+                            {isSuspended ? <CheckCircle className="h-4 w-4 text-emerald-500" /> : <Ban className="h-4 w-4" />}
+                          </button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
             </TableBody>
           </Table>
         </div>
-        
+        {!loading && users.length > 0 && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Menampilkan {Math.min(pageSize, users.length - (currentPage - 1) * pageSize)} dari {users.length} pengguna
+            </p>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(Math.max(1, Math.min(page, totalPages)))}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -4,19 +4,68 @@ import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { MoreDotIcon } from "@/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { getReports, Report } from "@/lib/report";
+import { getCategories, Category } from "@/lib/category";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-export default function KategoriDonutChart() {
-  const series = [45, 25, 20, 10];
+export default function MonthlyTarget() {
+  const [series, setSeries] = useState<number[]>([45, 25, 20, 10]);
+  const [labels, setLabels] = useState<string[]>([
+    "Infrastruktur",
+    "Lingkungan",
+    "Keamanan",
+    "Lainnya",
+  ]);
   
+  useEffect(() => {
+    async function fetchCategoryData() {
+      try {
+        const [reportsRes, categoriesRes] = await Promise.all([
+          getReports(),
+          getCategories(),
+        ]);
+
+        if (
+          reportsRes?.success &&
+          Array.isArray(reportsRes.data) &&
+          categoriesRes?.success &&
+          Array.isArray(categoriesRes.data)
+        ) {
+          const categoryMap = new Map<string, string>();
+          categoriesRes.data.forEach((category: Category) => {
+            categoryMap.set(String(category.id), category.nama);
+          });
+
+          const counts = new Map<string, number>();
+          reportsRes.data.forEach((report: Report) => {
+            const categoryId = String(report.id_kategori || "");
+            const key = categoryMap.get(categoryId) || "Lainnya";
+            counts.set(key, (counts.get(key) || 0) + 1);
+          });
+
+          const finalLabels = Array.from(counts.keys());
+          const finalSeries = Array.from(counts.values());
+
+          if (finalLabels.length > 0) {
+            setLabels(finalLabels);
+            setSeries(finalSeries);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching category donut data:", error);
+      }
+    }
+
+    fetchCategoryData();
+  }, []);
+
   const options: ApexOptions = {
-   colors: ["#10b981", "#34d399", "#a7f3d0", "#cbd5e1"],
+    colors: ["#10b981", "#34d399", "#a7f3d0", "#cbd5e1", "#60a5fa", "#fbbf24"],
     chart: {
       fontFamily: "Outfit, sans-serif",
       type: "donut", // Diubah jadi donut
@@ -125,7 +174,7 @@ export default function KategoriDonutChart() {
             <ReactApexChart
               options={options}
               series={series}
-              type="donut" // Diubah jadi donut
+              type="donut"
               height={330}
             />
           </div>

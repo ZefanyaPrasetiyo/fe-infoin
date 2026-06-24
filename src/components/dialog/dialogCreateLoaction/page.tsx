@@ -14,9 +14,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { toast } from "sonner"; // Pastikan udah install sonner
-import { createLocation, LocationPayload } from "@/lib/location"; // Sesuaikan path ini bray!
-
+import { toast } from "sonner"; 
+import { createLocation, LocationPayload } from "@/lib/location";
 const MapSelector = dynamic(() => import("@/components/maps/map"), {
   ssr: false,
   loading: () => (
@@ -52,12 +51,8 @@ export function DialogAddLocation() {
       }
 
       setOpen(false);
-      setNamaWilayah(""); // Reset nama wilayah
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-
+      setNamaWilayah("");
+    
       return res;
     });
 

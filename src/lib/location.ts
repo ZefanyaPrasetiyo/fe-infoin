@@ -1,8 +1,7 @@
 import { api } from "@/lib/api"
 
-// Interface untuk balikan data dari database
 export interface Location {
-    id: string; // Pakai string karena lu pake ULID bray
+    id: string; 
     nama_lokasi: string;
     latitude: number;
     longitude: number;
@@ -12,12 +11,11 @@ export interface Location {
     deleted_at?: string | null;
 }
 
-// Interface khusus buat ngirim data (Create & Update)
 export interface LocationPayload {
     nama_lokasi: string;
-    latitude: number; // Tipe number karena desimal
+    latitude: number;
     longitude: number;
-    radius_km?: number; // Opsional, kalau kosong bakal diisi 5 sama controller lu
+    radius_km?: number; 
 }
 
 export async function getLocations() {

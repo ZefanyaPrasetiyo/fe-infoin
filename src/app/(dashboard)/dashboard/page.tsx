@@ -1,9 +1,11 @@
+
 import type { Metadata } from "next";
 import { EcommerceMetrics } from "@/components/ecommerce/EcommerceMetrics";
 import React from "react";
 import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
 import MonthlySalesChart from "@/components/ecommerce/MonthlySalesChart";
 import RecentOrders from "@/components/ecommerce/RecentOrders";
+import { useSession } from "next-auth/react";
 
 export const metadata: Metadata = {
   title:
@@ -12,6 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default function Ecommerce() {
+
   return (
     // Grid utama untuk membungkus seluruh konten dashboard
     <div className="grid grid-cols-12 gap-4 md:gap-6">

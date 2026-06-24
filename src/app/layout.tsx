@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { cn } from "@/lib/utils";
 import { Poppins } from 'next/font/google';
 import { Toaster } from "@/components/ui/sonner"
+import NextAuthProvider from "@/components/SessionProvider";
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -23,12 +24,14 @@ export default function RootLayout({
     <html lang="en" className={cn(poppins.variable)}>
       {/* Menggunakan font-sans agar membaca konfigurasi Tailwind dan menghapus outfit.className */}
       <body className="font-sans antialiased dark:bg-gray-900">
-        <ThemeProvider>
-          <TooltipProvider>
-            <SidebarProvider>{children}</SidebarProvider>
-             <Toaster />
-          </TooltipProvider>
-        </ThemeProvider>
+       <NextAuthProvider>
+          <ThemeProvider>
+            <TooltipProvider>
+              <SidebarProvider>{children}</SidebarProvider>
+               <Toaster />
+            </TooltipProvider>
+          </ThemeProvider>
+        </NextAuthProvider>
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { Table, TableHeader, TableBody, TableRow, TableCell } from "@/components/ui/table";
+import Pagination from "@/components/tables/Pagination";
 import { Search } from "lucide-react";
 import { DialogAddCategory } from "@/components/dialog/dialogCreateCategory/page";
 import { getCategories, Category } from "@/lib/category";
@@ -11,6 +12,16 @@ import { Spinner } from "@/components/ui/spinner";
 export default function CategoryStatsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true); 
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 8;
+  const totalPages = Math.max(1, Math.ceil(categories.length / pageSize));
+  const paginatedCategories = categories.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const fetchgCategory = async () => {
     try {
@@ -87,13 +98,13 @@ export default function CategoryStatsPage() {
                   </td>
                 </TableRow>
               ) : (
-                categories.map((cat, index) => (
+                paginatedCategories.map((cat, index) => (
                   <TableRow 
                     key={cat.id} 
                     className="border-b border-gray-50/50 transition-colors hover:bg-gray-50/50 dark:border-white/5 dark:hover:bg-white/5"
                   >
                     <TableCell className="py-4 px-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-                      {index + 1}
+                      {index + 1 + (currentPage - 1) * pageSize}
                     </TableCell>
 
                     <TableCell className="py-4 px-2">
@@ -115,7 +126,18 @@ export default function CategoryStatsPage() {
             </TableBody>
           </Table>
         </div>
-        
+        {!loading && categories.length > 0 && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Menampilkan {Math.min(pageSize, categories.length - (currentPage - 1) * pageSize)} dari {categories.length} kategori
+            </p>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(Math.max(1, Math.min(page, totalPages)))}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

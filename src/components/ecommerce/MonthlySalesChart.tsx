@@ -1,10 +1,12 @@
 "use client";
+
 import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
 import { MoreDotIcon } from "@/icons";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
+import { getReports, Report } from "@/lib/report";
 
 // Dynamically import the ReactApexChart component
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
@@ -12,6 +14,37 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 });
 
 export default function MonthlySalesChart() {
+  const [seriesData, setSeriesData] = useState<number[]>(
+    new Array(12).fill(0)
+  );
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    async function fetchSalesData() {
+      try {
+        const reportsRes = await getReports();
+        if (reportsRes?.success && Array.isArray(reportsRes.data)) {
+          const monthlyCounts = new Array(12).fill(0);
+
+          reportsRes.data.forEach((report: Report) => {
+            const createdAt = report.created_at || report.updated_at || "";
+            const date = new Date(createdAt);
+            const month = !Number.isNaN(date.getTime()) ? date.getMonth() : -1;
+            if (month >= 0 && month < 12) {
+              monthlyCounts[month] += 1;
+            }
+          });
+
+          setSeriesData(monthlyCounts);
+        }
+      } catch (error) {
+        console.error("Error fetching monthly sales data:", error);
+      }
+    }
+
+    fetchSalesData();
+  }, []);
+
   const options: ApexOptions = {
     colors: ["#10b981"],
     chart: {
@@ -81,7 +114,6 @@ export default function MonthlySalesChart() {
     fill: {
       opacity: 1,
     },
-
     tooltip: {
       x: {
         show: false,
@@ -91,13 +123,13 @@ export default function MonthlySalesChart() {
       },
     },
   };
+
   const series = [
     {
-      name: "Sales",
-      data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+      name: "Reports",
+      data: seriesData,
     },
   ];
-  const [isOpen, setIsOpen] = useState(false);
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -118,11 +150,7 @@ export default function MonthlySalesChart() {
           <button onClick={toggleDropdown} className="dropdown-toggle">
             <MoreDotIcon className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" />
           </button>
-          <Dropdown
-            isOpen={isOpen}
-            onClose={closeDropdown}
-            className="w-40 p-2"
-          >
+          <Dropdown isOpen={isOpen} onClose={closeDropdown} className="w-40 p-2">
             <DropdownItem
               onItemClick={closeDropdown}
               className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"

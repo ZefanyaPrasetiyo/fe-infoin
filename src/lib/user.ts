@@ -1,6 +1,7 @@
 import { api } from "@/lib/api"
 
 export interface User {
+    id: string;
     nama_panjang: string;
     email: string;
     password: string;
@@ -37,7 +38,7 @@ export async function getUserById(id: string) {
 }
 
 export async function createUser(payload: UserPayload) {
-    return await api("/api/user", {
+    return await api("/api/users", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -60,7 +61,7 @@ export async function updateUser(id: string, payload: UserPayload) {
 }
 
 export async function deleteUser(id: string) {
-    return await api(`/api/user/${id}`, {
+    return await api(`/api/users/${id}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",

@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
- const logo = "Infoin";
+ const logo = "/images/logo/logo-infoin.png";
 const items = [
   {
     label: "About",
@@ -155,17 +155,17 @@ export default function LandingPage() {
       </div>
 
       <div className="relative z-10 flex flex-col min-h-screen">
-    <CardNav
-          logo={logo}
-          logoAlt="infoin Logo"
-          items={items as any}
-          baseColor={isDark ? "#020617" : "#ffffff"}
-          menuColor={isDark ? "#ffffff" : "#0f172a"}
-          buttonBgColor="#059669"
-          buttonTextColor="#ffffff"
-          ease="power3.out"
-          theme={isDark ? "dark" : "light"}
-        />
+      <CardNav
+            logo={logo}
+            logoAlt="infoin Logo"
+            items={items as any}
+            baseColor={isDark ? "#020617" : "#ffffff"}
+            menuColor={isDark ? "#ffffff" : "#0f172a"}
+            buttonBgColor="#059669"
+            buttonTextColor="#ffffff"
+            ease="power3.out"
+            theme={isDark ? "dark" : "light"}
+          />
         <main className="flex flex-col items-center justify-center w-full grow">
           <section id="beranda" className="w-full min-h-screen flex items-center justify-center px-4 pt-24 pb-16">
             <div className="container mx-auto max-w-6xl flex flex-col lg:flex-row gap-12 lg:gap-8 items-center justify-between">

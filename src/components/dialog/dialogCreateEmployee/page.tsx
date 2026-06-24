@@ -57,6 +57,7 @@ export function DialogAddEmployee() {
           const res = await getLocations();
           if (res && res.data) {
             setLokasi(res.data);
+            console.log("Data lokasi berhasil diambil:", res.data);
           }
         } catch (error) {
           console.error("Gagal mengambil data lokasi", error);
@@ -188,23 +189,34 @@ export function DialogAddEmployee() {
             />
           </Field>
 
-          <Field>
+         <Field>
             <FieldLabel className="mb-1.5 block text-xs font-semibold text-gray-700 dark:text-gray-300">
               Wilayah Penempatan Dinas
             </FieldLabel>
-            <Select required value={form.daerah_id} onValueChange={(value) => setForm({...form, daerah_id: value})}>
+            <Select 
+              required 
+              value={form.daerah_id || undefined} 
+              onValueChange={(value) => setForm({...form, daerah_id: value})}
+            >
               <SelectTrigger className="w-full h-[42px] rounded-xl border border-gray-200 bg-transparent px-4 text-sm outline-none focus:border-emerald-500 dark:border-gray-800">
-                <SelectValue placeholder={loadingLokasi ? "Memuat..." : "Pilih Kecamatan Tugas"} />
+                <SelectValue placeholder={loadingLokasi ? "Memuat data wilayah..." : "Pilih Kecamatan Tugas"}>
+                  {form.daerah_id 
+                    ? lokasi.find((loc) => String(loc.id) === form.daerah_id)?.nama_lokasi 
+                    : undefined}
+                </SelectValue>
               </SelectTrigger>
-              <SelectContent className="z-999 rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-               {lokasi.length > 0 ? (
+              
+              <SelectContent className="z-[9999] max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+               {lokasi && lokasi.length > 0 ? (
                  lokasi.map((option) => (
-                   <SelectItem key={option.id} value={option.id}>
+                   <SelectItem key={option.id} value={String(option.id)}>
                      {option.nama_lokasi}
                    </SelectItem>
                  ))
                ) : (
-                 <SelectItem value="none" disabled>Belum ada data wilayah</SelectItem>
+                 <SelectItem value="none" disabled>
+                   {loadingLokasi ? "Sedang memuat..." : "Belum ada data wilayah"}
+                 </SelectItem>
                )}
               </SelectContent>
             </Select>
