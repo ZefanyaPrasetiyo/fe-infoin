@@ -57,10 +57,10 @@ export default function DialogActionUser({ user }: DialogActionUserProps) {
     toast.promise(deletePromise, {
       loading: "Sedang menghapus pengguna...",
       success: "Pengguna berhasil dihapus",
-      error: "Gagal menghapus pengguna"
-    }, {
+      error: "Gagal menghapus pengguna",
       position: "top-right"
-    })
+    }
+    )
   }
 
   return (

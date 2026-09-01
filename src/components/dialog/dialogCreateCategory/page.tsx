@@ -38,10 +38,10 @@ export function DialogAddCategory() {
    toast.promise(createPromise, {
   loading: "Sedang membuat kategori...",
   success: "Kategori berhasil dibuat",
-  error: "Gagal membuat kategori"
-}, {
+  error: "Gagal membuat kategori",
   position: "top-right"
-})
+}, 
+)
   }
 
   return (

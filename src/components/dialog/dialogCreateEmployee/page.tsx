@@ -105,10 +105,10 @@ export function DialogAddEmployee() {
     toast.promise(createPromise, {
         loading: "Mendaftarkan petugas baru...",
         success: "Petugas berhasil didaftarkan!",
-        error: "Gagal mendaftarkan petugas"
-    }, {
+        error: "Gagal mendaftarkan petugas",
         position: "top-right"
-    });
+    }
+    );
   };
 
   return (
@@ -196,7 +196,7 @@ export function DialogAddEmployee() {
             <Select 
               required 
               value={form.daerah_id || undefined} 
-              onValueChange={(value) => setForm({...form, daerah_id: value})}
+              onValueChange={(value) => setForm({...form, daerah_id: value ?? ""})}
             >
               <SelectTrigger className="w-full h-[42px] rounded-xl border border-gray-200 bg-transparent px-4 text-sm outline-none focus:border-emerald-500 dark:border-gray-800">
                 <SelectValue placeholder={loadingLokasi ? "Memuat data wilayah..." : "Pilih Kecamatan Tugas"}>

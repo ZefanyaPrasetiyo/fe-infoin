@@ -62,10 +62,9 @@ export function DialogAddLocation() {
         loading: "Sedang menyimpan wilayah...",
         success: "Wilayah berhasil ditambahkan",
         error: (err) => err.message || "Gagal menambahkan wilayah",
-      },
-      {
         position: "top-right",
       },
+
     );
   };
 
@@ -111,10 +110,11 @@ export function DialogAddLocation() {
             <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800">
               <MapSelector
                 position={[latitude, longitude]}
-                setPosition={(pos: [number, number]) => {
-                  setLatitude(pos[0]);
-                  setLongitude(pos[1]);
-                }}
+              setPosition={(pos: [number, number] | null) => {
+  if (!pos) return;
+  setLatitude(pos[0]);
+  setLongitude(pos[1]);
+}}
               />
             </div>
             <p className="mt-1.5 text-[10px] text-gray-400">

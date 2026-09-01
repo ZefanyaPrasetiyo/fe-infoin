@@ -59,10 +59,10 @@ export default function SignUpForm() {
   };
 
   // Handler khusus untuk komponen Select dari shadcn
-  const handleSelectLocation = (value: string) => {
+  const handleSelectLocation = (value: string | null) => {
     setFormData({
       ...formData,
-      id_location: value,
+      id_location: value ?? "",
     });
   };
 

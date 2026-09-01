@@ -53,10 +53,10 @@ export default function DialogActionCategory({ category }: DialogActionCategoryP
     toast.promise(updatePromise, {
       loading: "Sedang memperbarui kategori...",
       success: "Kategori berhasil diperbarui",
-      error: "Gagal memperbarui kategori"
-    }, {
+      error: "Gagal memperbarui kategori",
       position: "top-right"
-    })
+    }, 
+    )
   }
 
   const handleDelete = async () => {
@@ -70,10 +70,10 @@ export default function DialogActionCategory({ category }: DialogActionCategoryP
     toast.promise(deletePromise, {
       loading: "Sedang menghapus kategori...",
       success: "Kategori berhasil dihapus",
-      error: "Gagal menghapus kategori"
-    }, {
+      error: "Gagal menghapus kategori",
       position: "top-right"
-    })
+    },
+    )
   }
 
   return (

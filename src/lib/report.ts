@@ -31,7 +31,7 @@ export interface Report {
 }
 
 export interface UpdateStatusPayload {
-  status: "menunggu" | "diproses" | "disetujui";
+  status: "menunggu" | "diproses" | "disetujui" | "ditolak";
   catatan?: string;
 }
 

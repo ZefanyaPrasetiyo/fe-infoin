@@ -23,7 +23,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
-  const [actionType, setActionType] = useState<"detail" | "approve" | "reject" | null>(null);
+  const [actionType, setActionType] = useState<"detail" | "disetujui" | "ditolak" | null>(null);
 
   const currentUserId = "01KTM2K4MNMKJQKM5NZSG4FK7W";
 

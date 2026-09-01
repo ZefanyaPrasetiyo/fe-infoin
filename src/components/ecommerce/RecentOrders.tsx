@@ -173,7 +173,7 @@ export default function RecentOrders() {
                           ? "primary"
                           : report.status === "Menunggu"
                           ? "warning"
-                          : "danger"
+                          : "error"
                       }
                     >
                       {report.status}

@@ -63,10 +63,10 @@ export default function DialogActionLocation({ location }: DialogActionLocationP
     toast.promise(deletePromise, {
       loading: "Sedang menghapus wilayah...",
       success: "Wilayah berhasil dihapus",
-      error: "Gagal menghapus wilayah"
-    }, {
+      error: "Gagal menghapus wilayah",
       position: "top-right"
-    })
+    }
+    )
   }
 
   return (

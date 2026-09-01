@@ -184,7 +184,7 @@ const ID_USER = session?.data?.user?.id
     try {
       const formData = new FormData();
 
-      formData.append("id_user", ID_USER);
+      formData.append("id_user", ID_USER ?? "");
       formData.append("id_kategori", form.categoryId);
       formData.append("id_location", form.locationId);
       const namaKategori = categories.find(
